@@ -1,0 +1,50 @@
+.site-footer {
+  width: 100%;
+  background: linear-gradient(90deg, #e0eaff 0%, #f8f9fa 100%);
+  border-top: 1px solid #e0eaff;
+  padding: 2rem 0;
+  text-align: center;
+  box-shadow: 0 -2px 16px rgba(74,109,167,0.04);
+  margin-top: 3rem;
+}
+.footer-content {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  font-size: 1.1rem;
+  color: #4a6da7;
+}
+.footer-content .btn {
+  margin: 0 0.4rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(74,109,167,0.04);
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+}
+.btn-primary {
+  background: linear-gradient(90deg, #4a6da7 0%, #628fc4 100%);
+  color: #fff;
+}
+.btn-secondary {
+  background: #fff;
+  color: #4a6da7;
+  border: 1.5px solid #4a6da7;
+}
+.btn-primary:hover, .btn-primary:focus {
+  background: linear-gradient(90deg, #628fc4 0%, #4a6da7 100%);
+  color: #e0eaff;
+  transform: scale(1.07);
+}
+.btn-secondary:hover, .btn-secondary:focus {
+  background: #e0eaff;
+  color: #304c6e;
+  transform: scale(1.04);
+}

@@ -1,0 +1,46 @@
+image: python:3.11
+
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  BIBLE_DB_PATH: $(pwd)/artifacts/bible.sqlite   # ← single source of truth
+
+steps:
+  # 1. Install deps (Python + Node)
+  - id: setup
+    run: |
+      pip install -r requirements.txt
+      npm ci
+    cache: [".cache/pip", "~/.npm"]
+
+  # 2. Bible ingest (runs only if bundle missing)
+  - id: bible-guard
+    run: |
+      if [ -f artifacts/bible.sqlite ]; then
+        echo "✅ bible.sqlite present – skipping ingest"
+        exit 0
+      fi
+
+  - id: bible-ingest
+    needs: [bible-guard]
+    run: |
+      python data_prep/fetch_sources.py      # pull WEB & KJV USFM
+      python data_prep/to_postgres.py        # USFM → Postgres (table bible_verses)
+      python data_prep/embed.py              # pgvector + text-embedding-3-small
+      python data_prep/export_sqlite.py      # ➜ artifacts/bible.sqlite + FAISS
+    outputs:
+      - artifacts/bible.sqlite
+
+  # 3. Build the React PWA
+  - id: build-front
+    run: |
+      npm run build
+    env:
+      REACT_APP_BIBLE_DB: $BIBLE_DB_PATH
+
+  # 4. Optional lightweight FastAPI RAG server (only if api/ exists)
+  - id: api
+    run: |
+      if [ -f api/app.py ]; then
+        uvicorn api.app:app --host 0.0.0.0 --port 8000 &
+      fi
+      echo "API (if any) started"
